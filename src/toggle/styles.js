@@ -11,14 +11,14 @@ const VariantsContainerMixin = css`
 `;
 
 const Item = styled.span`
-    padding: 0 22px;
+    padding: 1px 22px;
     font-size: 16px;
     white-space: nowrap;
 `;
 
 const ToggleContainer = styled.div`
-  padding: 2px;
-  border-radius: 11px;
+  padding: 3px;
+  border-radius: 13px;
   border: 1px solid #fff;
   cursor: pointer;
   position: relative;
@@ -39,12 +39,12 @@ const ActiveItem = styled(motion.div)`
   position: absolute;
   align-items: center;
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 9px;
   overflow: hidden;
   left: 0;
 
   > ${Item} {
-    color: #000;
+    color: #000000;
   }
 `;
 
