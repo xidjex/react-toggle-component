@@ -11,7 +11,7 @@ const getStartPosition = ({ lineSide }) => `
 `;
 
 const getEndPosition = ({ lineSide }) => `
-    ${lineSide}: 90%;
+    ${lineSide}: 100%;
     transform: translateX(2px);
 `;
 
@@ -30,14 +30,18 @@ const slideIn = ({ lineSide }) => keyframes`
 const ButtonContainer = styled.div`
     position: relative;
 
-    padding: 5px;
+    padding: 10px;
 
     font-size: 16px;
     color: #fff;
+    text-transform: uppercase;
     cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+    user-select: none;
+    outline: none;
+    text-shadow: 1px 1px 2px black;
     
     &:before {
-      width: 25px;
+      width: 35px;
       height: 1px;
       
       position: absolute;

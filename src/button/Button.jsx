@@ -26,7 +26,7 @@ const Button = ({ children, disabled, lineSide, onClick }) => {
         <ButtonContainer
             disabled={disabled}
             lineSide={lineSide}
-            onClick={!disabled && onClick}
+            onClick={!disabled ? onClick : undefined}
         >
             {children}
         </ButtonContainer>
