@@ -1,45 +1,30 @@
 import React, {
-    useMemo,
     useRef,
-    useState
+    useState,
 } from 'react';
 import PropTypes from 'prop-types';
 
 // Styles
-import { CardContainer, makeVariants } from './styles';
+import { CardContainer } from './styles';
 
 // Default Props
 const defaultProps = {
-    index: 1,
-    initial: false,
-    maxSize: 400,
     onClick: null,
 };
 
 // Prop Types
 const propTypes = {
-    index: PropTypes.number,
-    initial: PropTypes.bool,
-    maxSize: PropTypes.number,
     src: PropTypes.string.isRequired,
     onClick: PropTypes.func,
 };
 
-const Card = ({
-    index,
-    initial,
-    maxSize,
-    src,
-    onClick
-}) => {
+const Card = ({ src, onClick }) => {
     const [imgProps, setImgProps] = useState({ width: 0, height: 0 });
     const [isError, setIsError] = useState(false);
 
     const imgRef = useRef(null);
 
     const isHorizontal = imgProps.width > imgProps.height;
-
-    const variants = useMemo(() => makeVariants(index, initial), [index, initial]);
 
     const handleLoad = () => {
         const {
@@ -60,11 +45,7 @@ const Card = ({
 
     return (
         <CardContainer
-            animate="show"
-            exit="hide"
             isHorizontal={isHorizontal}
-            maxSize={maxSize}
-            variants={variants}
             onClick={onClick}
         >
             <img
