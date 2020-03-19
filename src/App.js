@@ -12,6 +12,10 @@ import card8 from './assets/8.jpeg';
 import card9 from './assets/9.jpeg';
 import Button from './button/Button';
 import Card from './card/Card';
+import GridCardLayout from './card/layouts/GridCardLayout';
+import StackCardLayout from './card/layouts/StackCardLayout';
+import Counter from './counter/Counter';
+import Toggle from './toggle/Toggle';
 
 const GlobalStyles = createGlobalStyle`
 html,
@@ -22,6 +26,9 @@ body,
   margin: 0;
   padding: 0;
   overflow: hidden;
+  
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent;
 }
 `;
 
@@ -35,22 +42,79 @@ const Container = styled.div`
 `;
 
 const ButtonNext = styled.div`
-position: absolute;
-z-index: 5;
-right: 10%;
+    position: absolute;
+    z-index: 5;
+    right: 10%;
 `;
 const ButtonPrev = styled.div`
-position: absolute;
-z-index: 5;
-left: 10%;
+    position: absolute;
+    z-index: 5;
+    left: 10%;
 `;
 
-const list = [[card1, 1], [card2, 2], [card3, 3], [card4, 4], [card5, 5], [card6, 6], [card7, 7], [card8, 8], [card9, 9]];
+const ToggleContainer = styled.div`
+  position: absolute;
+  z-index: 5;
+  transform: rotate(-90deg);
+`;
+
+const list = [
+    {
+        src: card4,
+        id: 4,
+        width: 500,
+        height: 750,
+    },
+    {
+        src: card1,
+        id: 1,
+    },
+    {
+        src: card3,
+        id: 3,
+    },
+    {
+        src: card5,
+        id: 5,
+    },
+    {
+        src: card2,
+        id: 2,
+    },
+    {
+        src: card6,
+        id: 6,
+    },
+    {
+        src: card7,
+        id: 7,
+    },
+    {
+        src: card9,
+        id: 9,
+    },
+    {
+        src: card8,
+        id: 8,
+    },
+];
+
+const variants = [
+    {
+        id: 1,
+        title: 'Cards',
+    },
+    {
+        id: 2,
+        title: 'Grid',
+    },
+];
 
 function App() {
-    const [state, setState] = useState(list);
+    const [state, setState] = useState([...list]);
     const [initial, setInitial] = useState(true);
     const [hiddenStack, setStack] = useState([]);
+    const [grid, setGrid] = useState(variants[0]);
 
     const handleNextClick = () => {
         const last = state.pop();
@@ -70,22 +134,48 @@ function App() {
         setInitial(false);
     }, []);
 
-
     return (
         <Container>
             <GlobalStyles/>
-            <ButtonPrev><Button onClick={handlePrevClick} disabled={!hiddenStack.length} lineSide={Button.lineSides.right}>Prev</Button></ButtonPrev>
-            <ButtonNext><Button onClick={handleNextClick} disabled={state.length === 1}>Next</Button></ButtonNext>
+            <Counter
+                current={hiddenStack.length + 1}
+                max={list.length}
+            />
+            <ButtonPrev>
+                <Button
+                    disabled={!hiddenStack.length}
+                    lineSide={Button.lineSides.right}
+                    onClick={handlePrevClick}
+                >
+                    Prev
+                </Button>
+            </ButtonPrev>
+            <ButtonNext>
+                <Button
+                    disabled={state.length === 1}
+                    onClick={handleNextClick}
+                >
+                    Next
+                </Button>
+            </ButtonNext>
+            <ToggleContainer>
+                <Toggle variants={variants} onChange={setGrid} active={1}/>
+            </ToggleContainer>
             <AnimatePresence>
                 {
-                    state.map(([link, index]) => (
-                        <Card
-                            index={index}
-                            initial={initial}
-                            src={link}
-                            key={link}
-                        />
-                    ))
+                    grid.id === 1 ? (
+                        state.map(({ src: link }, index) => (
+                            <StackCardLayout
+                                index={index + 1}
+                                initial={initial}
+                                key={link}
+                            >
+                                <Card src={link} />
+                            </StackCardLayout>
+                        ))
+                    ) : (
+                        <GridCardLayout images={list}/>
+                    )
                 }
             </AnimatePresence>
         </Container>
