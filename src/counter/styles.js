@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+export const digitHeight = 16;
+
 const CounterContainer = styled.div`
   width: 40px;
   height: max-content;
@@ -11,13 +13,15 @@ const CounterContainer = styled.div`
 `;
 
 const Digit = styled.span`
-    font-size: 16px;
+    font-size: ${digitHeight}px;
+    line-height: ${digitHeight}px;
     color: #fff;
+    user-select: none;
 `;
 
 const DigitsContainer = styled.div`
   width: 40px;
-  height: 20px;
+  height: 16px;
   
   position: relative;
   
@@ -49,7 +53,7 @@ const ProgressContainer = styled.div`
   overflow: hidden;
   
   border-radius: 2px;
-  background: #ffffff60;
+  background: #ffffff40;
     
   :after {
     width: 2px;

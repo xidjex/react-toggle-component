@@ -8,6 +8,7 @@ import {
     DigitsContainer,
     DigitsList,
     ProgressContainer,
+    digitHeight,
 } from './styles';
 
 // Default Props
@@ -36,7 +37,7 @@ const Counter = ({ min, max, current }) => {
     return (
         <CounterContainer>
             <DigitsContainer>
-                <DigitsList top={list.indexOf(current) * 18}>
+                <DigitsList top={list.indexOf(current) * digitHeight}>
                     {
                         list.map((value) => {
                             return <Digit key={value}>{value}</Digit>;

@@ -43,11 +43,11 @@ const Toggle = ({ variants, active, onChange }) => {
     const containerRef = useRef(null);
 
     const handleClick = (index) => (event) => {
-        const { offsetLeft: x } = event.target;
         const { width, height } = event.target.getBoundingClientRect();
+        const { offsetLeft: x } = event.target;
 
         // If component rotated then use height instead of width
-        setData({ width: (width < height ? height : width) - 1, x });
+        setData({ width: width < height ? height : width, x });
 
         onChange(variants[index]);
     };

@@ -14,6 +14,7 @@ const Item = styled.span`
     padding: 1px 22px;
     font-size: 16px;
     white-space: nowrap;
+    user-select: none;
 `;
 
 const ToggleContainer = styled.div`
