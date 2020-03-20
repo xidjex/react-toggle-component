@@ -63,7 +63,7 @@ const ButtonContainer = styled.div`
           
           ${getEndPosition(props)}
         }
-    }
+      }
     `}
 `;
 

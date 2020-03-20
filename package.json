@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@rehooks/window-size": "^1.0.2",
     "@storybook/addons": "^5.3.17",
     "@storybook/react": "^5.3.17",
     "@storybook/theming": "^5.3.17",
@@ -13,7 +14,9 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
+    "react-use": "^13.27.0",
     "styled-components": "^5.0.1"
   },
   "scripts": {

@@ -14,7 +14,7 @@ import {
 
 // Utils
 import { chunk } from './utils';
-import randomString from '../../utils/randomString';
+import randomString from '../../../utils/randomString';
 
 // Default Props
 const defaultProps = {};

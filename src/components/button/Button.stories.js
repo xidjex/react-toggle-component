@@ -21,6 +21,7 @@ export const defaultButton = () => (
         <Button onClick={() => alert('Next')}>Next</Button>
     </Inline>
 );
+
 export const disabledButton = () => (
     <Inline>
         <Button disabled onClick={() => alert('Next')}>Disabled</Button>

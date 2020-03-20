@@ -5,7 +5,7 @@ import React, {
 import PropTypes from 'prop-types';
 
 // Styles
-import { CardContainer } from './styles';
+import { CardStyled } from './styles';
 
 // Default Props
 const defaultProps = {
@@ -18,7 +18,7 @@ const propTypes = {
     onClick: PropTypes.func,
 };
 
-const Card = ({ src, onClick }) => {
+const Card = ({ src, onClick, ...props }) => {
     const [imgProps, setImgProps] = useState({ width: 0, height: 0 });
     const [isError, setIsError] = useState(false);
 
@@ -44,18 +44,16 @@ const Card = ({ src, onClick }) => {
     }
 
     return (
-        <CardContainer
+        <CardStyled
+            {...props}
+            alt="Card"
+            ref={imgRef}
+            src={src}
+            onError={handleError}
+            onLoad={handleLoad}
             isHorizontal={isHorizontal}
             onClick={onClick}
-        >
-            <img
-                alt="Card"
-                ref={imgRef}
-                src={src}
-                onError={handleError}
-                onLoad={handleLoad}
-            />
-        </CardContainer>
+        />
     );
 };
 
