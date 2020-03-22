@@ -38,7 +38,6 @@ const ButtonContainer = styled.div`
     cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
     user-select: none;
     outline: none;
-    text-shadow: 1px 1px 2px black;
     
     &:before {
       width: 35px;

@@ -1,7 +1,4 @@
-import React, {
-    useRef,
-    useState,
-} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Styles
@@ -9,30 +6,30 @@ import { CardStyled } from './styles';
 
 // Default Props
 const defaultProps = {
-    onClick: null,
+    absolute: false,
+    onClick: null
 };
 
 // Prop Types
 const propTypes = {
+    absolute: PropTypes.bool,
     src: PropTypes.string.isRequired,
     onClick: PropTypes.func,
 };
 
-const Card = ({ src, onClick, ...props }) => {
-    const [imgProps, setImgProps] = useState({ width: 0, height: 0 });
+const Card = ({ absolute, src, onClick, ...props }) => {
+    const [{ width, height, left, top }, setImgProps] = useState({
+        width: 0,
+        height: 0,
+        top: 0,
+        left: 0
+    });
     const [isError, setIsError] = useState(false);
 
-    const imgRef = useRef(null);
+    const isHorizontal = width > height;
 
-    const isHorizontal = imgProps.width > imgProps.height;
-
-    const handleLoad = () => {
-        const {
-            naturalWidth: width,
-            naturalHeight: height
-        } = imgRef.current;
-
-        setImgProps({ width, height });
+    const handleLoad = (event) => {
+        setImgProps(event.target.getBoundingClientRect());
     };
 
     const handleError = () => {
@@ -46,13 +43,15 @@ const Card = ({ src, onClick, ...props }) => {
     return (
         <CardStyled
             {...props}
+            absolute={absolute}
             alt="Card"
-            ref={imgRef}
+            left={left}
             src={src}
-            onError={handleError}
-            onLoad={handleLoad}
+            top={top}
             isHorizontal={isHorizontal}
             onClick={onClick}
+            onError={handleError}
+            onLoad={handleLoad}
         />
     );
 };

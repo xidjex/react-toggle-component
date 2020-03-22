@@ -46,7 +46,7 @@ const DigitsList = styled.div`
 
 const ProgressContainer = styled.div`
   width: 2px;
-  height: 200px;
+  height: 150px;
   
   margin: 4px 0;
 

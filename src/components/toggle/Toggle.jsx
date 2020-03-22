@@ -33,7 +33,7 @@ const propTypes = {
             PropTypes.string,
         ]).isRequired,
         title: PropTypes.string.isRequired
-    })),
+    })).isRequired,
     onChange: PropTypes.func.isRequired
 };
 
