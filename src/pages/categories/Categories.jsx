@@ -1,6 +1,6 @@
 import OnImagesLoaded from 'react-on-images-loaded';
 import { useAnimation } from 'framer-motion';
-import { useWindowSize } from 'react-use';
+import { useWindowSize, useMedia } from 'react-use';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -12,20 +12,22 @@ import {
     Title,
     LeftSide,
     RightSide,
-    Controls,
 } from './styles';
 
 // Components
 import Card from '../../components/card/Card';
+import Controls from './Controls';
 import Counter from '../../components/counter/Counter';
+import GridPreCalculate from './GridPreCalculate';
 import Toggle from '../../components/toggle/Toggle';
-import Button from '../../components/button/Button';
+import CategoryTitleGrid from './CategoryTitleGrid';
+import CategoryTitleStack from './CategoryTitleStack';
 
 // Utils
 import randomNumber from '../../utils/randomNumber';
 
 // Animation utils
-import { getAppearingAnimation } from './animations';
+import { getAppearingAnimation, useControls } from './animations';
 
 // Default Props
 const defaultProps = {
@@ -44,43 +46,48 @@ const propTypes = {
 
 const listTypes = [
     {
-        id: '1',
-        title: 'Cards'
+        id: 1,
+        title: 'Cards',
     },
     {
-        id: '2',
-        title: 'Grid'
-    }
+        id: 2,
+        title: 'Grid',
+    },
 ];
+
+const cardsListType = 1;
 
 function Categories({ list, title }) {
     const [isAbsolute, setAbsolute] = useState(false);
     const [hiddenList, setHiddenList] = useState([]);
-    const [listType, setListType] = useState(listTypes[0]);
+    const [cardsGrid, setCardsGrid] = useState(null);
+    const [isGrid, setIsGrid] = useState(false);
 
     const cardControls = useAnimation();
-    const headerControls = useAnimation();
-    const leftControls = useAnimation();
-    const rightControls = useAnimation();
-    const buttonsControls = useAnimation();
+    const [headerControls, headerShow] = useControls({ top: 0 }, { top: -85 });
+    const [categoryControls, categoryShow, categoryHide] = useControls({ opacity: 1 }, { opacity: 0 });
+    const [leftControls, leftShow, leftHide] = useControls({ x: '0%' }, { x: '-100%' });
+    const [rightControls, rightShow] = useControls({ x: '0%' }, { x: '100%' });
+    const [stackControls, stackControlsShow, stackControlsHide] = useControls({ opacity: 1 }, { opacity: 0 });
 
     const { width } = useWindowSize();
+    const isMobile = useMedia('(min-width: 320px) and (max-width: 480px)');
 
     const handleNextClick = () => {
         cardControls.start((cardIndex, currentState) => {
             if (cardIndex !== list.length - hiddenList.length) {
                 return {
                     ...currentState,
-                    rotate: currentState.rotate * -1,
+                    rotate: randomNumber(10),
                     transition: {
                         duration: 0.6,
-                    }
+                    },
                 };
             }
 
             setHiddenList([
                 ...hiddenList,
-                [cardIndex, currentState]
+                [cardIndex, currentState],
             ]);
 
             return {
@@ -101,17 +108,17 @@ function Categories({ list, title }) {
         if (!lastCard) return;
 
         cardControls.start((cardIndex) => {
-            const [index, props] = lastCard;
+            const [index, prevProps] = lastCard;
 
             if (cardIndex === index) {
                 return {
-                    ...props,
+                    ...prevProps,
                     opacity: 1,
                     rotate: [30, randomNumber(12)],
                     transition: {
                         duration: 0.4,
                         ease: 'easeOut',
-                    }
+                    },
                 };
             }
 
@@ -125,19 +132,21 @@ function Categories({ list, title }) {
         await cardControls.start(() => ({
             left: width / 2,
             x: '-50%',
+            opacity: 1,
             transition: {
                 duration: 1,
-                delay: 0.5
+                delay: 0.5,
             },
         }));
 
-        headerControls.start(getAppearingAnimation({ top: 0 }));
-        leftControls.start(getAppearingAnimation({ left: 0 }));
-        rightControls.start(getAppearingAnimation({ right: 0 }));
-        buttonsControls.start(getAppearingAnimation({ opacity: 1 }));
+        headerShow();
+        leftShow();
+        rightShow();
+        stackControlsShow();
+        categoryShow();
 
         return await cardControls.start(() =>
-            getAppearingAnimation({ rotate: randomNumber(12) })
+            getAppearingAnimation({ rotate: randomNumber(12) }),
         );
     };
 
@@ -147,42 +156,92 @@ function Categories({ list, title }) {
         initialAnimation();
     };
 
-    const color = list[list.length - hiddenList.length - 1].color;
+    const handleListTypeChange = async ({ id }) => {
+        if (id === cardsListType) {
+            await setIsGrid(false);
+            stackControlsShow(false);
+            categoryShow(false);
+
+            cardControls.start(() => ({
+                height: null,
+                left: width / 2,
+                opacity: 1,
+                rotate: randomNumber(12),
+                scale: 1,
+                top: '50%',
+                width: null,
+                x: '-50%',
+                y: '-50%',
+                transition: {
+                    duration: 1,
+                },
+            }));
+
+            leftShow(false);
+        } else {
+            leftHide();
+            stackControlsHide();
+            categoryHide();
+
+            await cardControls.start((i) => {
+                const { left, top, width, height } = cardsGrid[i - 1];
+
+                return {
+                    height,
+                    left,
+                    opacity: 1,
+                    rotate: 0,
+                    top,
+                    width,
+                    x: 0,
+                    y: 0,
+                    transition: {
+                        duration: 1,
+                    },
+                };
+            });
+
+            setHiddenList([]);
+            setIsGrid(true);
+        }
+    };
+
+    const backgroundColor = list[list.length - hiddenList.length - 1].color;
 
     return (
-        <CategoriesContainer backgroundColor={color}>
+        <CategoriesContainer backgroundColor={backgroundColor}>
+            {/* Header */}
             <Header animate={headerControls}>
                 {title && <Title>{title}</Title>}
             </Header>
-            <LeftSide animate={leftControls}>
-                <Counter current={hiddenList.length + 1} max={list.length} />
+
+            {/* Left Controls */}
+            <LeftSide animate={leftControls} isMobile={isMobile}>
+                <Counter current={hiddenList.length + 1} max={list.length}/>
             </LeftSide>
-            <RightSide animate={rightControls}>
+
+            {/* Right Controls */}
+            <RightSide
+                animate={rightControls}
+                isMobile={isMobile}
+                isTranslucent={isGrid}
+            >
                 <div>
-                    <Toggle
-                        variants={listTypes}
-                        onChange={setListType}
-                    />
+                    <Toggle variants={listTypes} onChange={handleListTypeChange}/>
                 </div>
             </RightSide>
-            <Controls animate={buttonsControls} left="20%">
-                <Button
-                    disabled={!hiddenList.length}
-                    lineSide={Button.lineSides.right}
-                    onClick={handleBackClick}
-                >
-                    Prev
-                </Button>
-            </Controls>
-            <Controls animate={buttonsControls} left="80%">
-                <Button
-                    disabled={(list.length - hiddenList.length) === 1}
-                    onClick={handleNextClick}
-                >
-                    Next
-                </Button>
-            </Controls>
-            <CardsContainer imagesCount={list.length}>
+
+            {/* Stack Controls */}
+            <Controls
+                animate={stackControls}
+                isNextDisabled={(list.length - hiddenList.length) === 1}
+                isPrevDisabled={!hiddenList.length}
+                onNextClick={handleNextClick}
+                onPrevClick={handleBackClick}
+            />
+
+            {/* Cards List*/}
+            <CardsContainer imagesCount={list.length} isGrid={isGrid}>
                 <OnImagesLoaded
                     timeout={3000}
                     onLoaded={handleLoaded}
@@ -191,21 +250,51 @@ function Categories({ list, title }) {
                     {
                         list.map(({ image, title, color }, index) => {
                             return (
-                                <Card
-                                    absolute={isAbsolute}
-                                    animate={cardControls}
-                                    custom={index + 1}
-                                    key={image}
-                                    src={image}
-                                />
+                                <div key={image}>
+                                    <Card
+                                        absolute={!isGrid && isAbsolute}
+                                        animate={cardControls}
+                                        custom={index + 1}
+                                        src={image}
+                                    />
+                                </div>
                             );
                         })
                     }
+                    {
+                        isGrid && cardsGrid && cardsGrid.map(({ left, top }, index) => {
+                            const category = list[index].title;
+
+                            return <CategoryTitleGrid
+                                key={category}
+                                initial={{
+                                    left,
+                                    top: top - 100,
+                                }}
+                                animate={{
+                                    top: `${top - 75}px`,
+                                    opacity: 1,
+                                    left: `${left}px`,
+                                    transition: {
+                                        duration: 0.6
+                                    }
+                                }}
+                            >
+                                {category}
+                            </CategoryTitleGrid>
+                        })
+                    }
+                    <CategoryTitleStack animate={categoryControls}>
+                        {list[list.length - hiddenList.length - 1].title}
+                    </CategoryTitleStack>
+
+                    {/* Grid Prerender */}
+                    <GridPreCalculate card={Card} list={list} onReady={setCardsGrid}/>
                 </OnImagesLoaded>
             </CardsContainer>
         </CategoriesContainer>
     );
-};
+}
 
 Categories.defaultProps = defaultProps;
 Categories.propTypes = propTypes;

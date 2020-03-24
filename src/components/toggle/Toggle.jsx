@@ -18,7 +18,7 @@ import itemsFactory from './itemsFactory';
 
 // Default Props
 const defaultProps = {
-    active: null,
+    active: 0,
 };
 
 // Prop Types
@@ -42,12 +42,18 @@ const Toggle = ({ variants, active, onChange }) => {
 
     const containerRef = useRef(null);
 
-    const handleClick = (index) => (event) => {
-        const { width, height } = event.target.getBoundingClientRect();
-        const { offsetLeft: x } = event.target;
+    const setActive = (node) => {
+        if (node) {
+            const { width, height } = node.getBoundingClientRect();
+            const { offsetLeft: x } = node;
 
-        // If component rotated then use height instead of width
-        setData({ width: width < height ? height : width, x });
+            // If component rotated then use height instead of width
+            setData({ width: width < height ? height : width, x });
+        }
+    };
+
+    const handleClick = (index) => ({ target }) => {
+        setActive(target);
 
         onChange(variants[index]);
     };
@@ -61,9 +67,9 @@ const Toggle = ({ variants, active, onChange }) => {
     // Select active item
     useLayoutEffect(() => {
         if (containerRef.current) {
-            containerRef.current.children[getChildrenIndex(active)].click();
+            setActive(containerRef.current.children[getChildrenIndex(active)]);
         }
-    }, []);
+    }, [active]);
 
     return (
         <ToggleContainer ref={containerRef}>
